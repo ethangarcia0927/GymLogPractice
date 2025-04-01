@@ -1,5 +1,6 @@
 package com.example.gymlogpractice.database.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -17,15 +18,14 @@ public class GymLog {
     private int reps;
     private LocalDateTime date;
 
+    @NonNull
     @Override
     public String toString() {
-        return "GymLog{" +
-                "id=" + id +
-                ", exercise='" + exercise + '\'' +
-                ", weight=" + weight +
-                ", reps=" + reps +
-                ", date=" + date +
-                '}';
+        return exercise + '\n' +
+                "weight:" + weight + '\n' +
+                "reps:" + reps + '\n' +
+                "date:" + date.toString() + '\n' +
+                "=-=-=-=-=-=-=-\n";
     }
 
     public GymLog(String exercise, double weight, int reps) {
