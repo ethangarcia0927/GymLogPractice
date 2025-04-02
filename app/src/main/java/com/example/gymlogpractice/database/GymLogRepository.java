@@ -3,11 +3,14 @@ package com.example.gymlogpractice.database;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+
 import com.example.gymlogpractice.database.entities.GymLog;
 import com.example.gymlogpractice.MainActivity;
 import com.example.gymlogpractice.database.entities.User;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -75,19 +78,26 @@ public class GymLogRepository {
     }
 
 
-    public User getUserByUserName(String username) {
-        Future<User> future = GymLogDatabase.databaseWriteExecutor.submit(
-                new Callable<User>() {
-                    @Override
-                    public User call() throws Exception {
-                        return userDAO.getUserByUserName(username);
-                    }
-                });
+    public LiveData<User> getUserByUserName(String username) {
+        return userDAO.getUserByUserName(username);
+    }
+    public LiveData<User> getUserByUserId(int userId) {
+        return userDAO.getUserByUserId(userId);
+    }
+
+    public ArrayList<GymLog> getAllLogsByUserId(int loggedInUserId) {
+        Future<ArrayList<GymLog>> future = GymLogDatabase.databaseWriteExecutor.submit(new Callable<ArrayList<GymLog>>() {
+            @Override
+            public ArrayList<GymLog> call() throws Exception {
+                return (ArrayList<GymLog>) gymLogDAO.getRecordsbyUserId(loggedInUserId);
+            }
+        });
         try {
-            future.get();
-        }catch (InterruptedException | ExecutionException e){
-            Log.d(MainActivity.TAG, "Problem when getting user by username");
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            Log.i(MainActivity.TAG, "Problem when getting all Gymlogs in the repository");
         }
         return null;
     }
+
 }
